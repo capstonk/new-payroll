@@ -1,0 +1,88 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: auto;
+    overflow-x: hidden;
+	font-family: Calibri;
+    scroll-behavior: smooth;
+}
+
+/*scrollbar color & size*/
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #D3D3D3;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #033766;
+}
+
+.container {
+    margin-left: 300px;
+	margin-right: 300px;
+    margin-top: 50px;
+	margin-bottom: 70px;
+	border: 2px #011e60 solid;
+	border-radius: 10px;
+	height: 620px;
+	box-shadow: 15px 10px #011e60;
+}
+
+
+h2 {
+	text-align: center;
+	font-size: 30px;
+}
+
+/* Add this CSS to center the form inside the container */
+form {
+   
+    text-align: center;
+}
+
+/* Style the form inputs and button */
+form input, form select, form button, select {
+    display: block;
+    margin: auto;
+    width: 30%; /* You can adjust the width as needed */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Style the select element */
+select {
+    width: 90%; /* Set the width to 100% to match the form width */
+}
+
+/* Style the options within the select element */
+select option {
+    width: 0%; /* Set the width to 100% to match the form width */
+}
+
+form button {
+   font-family: Calibri;
+    width: 300px;
+    height: 50px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 3px solid #033766;
+    background: #033766;
+    color: #f4f4f4;
+	cursor: pointer;
+    transition: cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.3s, transform 0.2s ease-out;
+}
+
+form button:hover {
+	background: #033766;
+	color: #f4f4f4;
+	font-size: 20px;
+	transform: scale (1.1);
+}
+.dob {
+	align-items: center;
+}
+
