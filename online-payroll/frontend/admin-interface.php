@@ -13,37 +13,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 $admin_username = $_SESSION["username"];
 
 // Function to fetch and display request data
-function showRequestsData($conn) {
-    $query = "SELECT * FROM request_account WHERE status = 'pending'"; // Modify the status condition as needed
-    $result = $conn->query($query);
-
-    if ($result->num_rows > 0) {
-        echo "<table border='1'>
-                <tr>
-                    <th>ID</th>
-                    <th>Control Number</th>
-                    <th>First Name</th>
-                    <th>Middle Name</th>
-                    <th>Last Name</th>
-                    <th>Position</th>
-                </tr>";
-
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>{$row['id']}</td>
-                    <td>{$row['control_no']}</td>
-                    <td>{$row['first_name']}</td>
-                    <td>{$row['middle_name']}</td>
-                    <td>{$row['last_name']}</td>
-                    <td>{$row['position']}</td>
-                </tr>";
-        }
-
-        echo "</table>";
-    } else {
-        echo "No pending requests found.";
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -85,13 +54,7 @@ function showRequestsData($conn) {
                     </a>
                  </li>
 				 
-                 <li style="--bg: #ecae7d;">
-                    <a onclick="showRequests()" id="create-tab">
-						<div class="icon"><ion-icon name="add-outline"></ion-icon> </div>
-						<div class="text">Requests</div>
-                    </a>
-                 </li>   
-				
+                
             </div>
 
             <div class="bottom">
@@ -123,18 +86,40 @@ function showRequestsData($conn) {
 				<div id="account-data"></div>
 			</div>
 		<!-- Account content ends here -->
-		
+			
 		
 		<!-- Create account content starts here -->
 			<div id="create-content" style="display: none;">
 				<h2>Create an account for new user</h2>
 				<form id="create-form">
-                    <label for="employee_id">Employee ID:</label>
-                    <input type="text" id="employee_id" name="employee_id" required><br>
+					<label for="control_no">Control No:</label>
+                    <input type="text" id="control_no" name="control_no" required>
 					
-					<label for="last_name">Last Name:</label>
-                    <input type="text" id="last_name" name="last_name" required><br>
 
+        <label for="user_level">User Level:</label>
+        <select id="user_level" name="user_level" onchange="showUserIdInput()" required>
+            <option value="employee">Employee</option>
+            <option value="hr">HR</option>
+            <option value="admin">Admin</option>
+        </select><br>
+
+        <div id="employee_id_input" style="display: none;">
+            <label for="employee_id">Employee ID:</label>
+            <input type="text" id="employee_id" name="employee_id" required><br>
+        </div>
+
+        <div id="hr_id_input" style="display: none;">
+            <label for="hr_id">HR ID:</label>
+            <input type="text" id="hr_id" name="hr_id" required><br>
+        </div>
+
+        <div id="admin_id_input" style="display: none;">
+            <label for="admin_id">Admin ID:</label>
+            <input type="text" id="admin_id" name="admin_id" required><br>
+        </div>
+
+<label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required><br>
                     <label for="first_name">First Name:</label>
                     <input type="text" id="first_name" name="first_name" required><br>
 
@@ -143,9 +128,7 @@ function showRequestsData($conn) {
 
                     <label for="position_acquired">Position Acquired:</label>
                     <input type="text" id="position_acquired" name="position_acquired" required><br>
-
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required><br>
+                  
 
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required><br>
@@ -179,7 +162,7 @@ function showRequestsData($conn) {
 		
 <!-- tabs content script -->
 <script>
-        let menuToggle = document.querySelector('.menuToggle');
+     let menuToggle = document.querySelector('.menuToggle');
     let sidebar = document.querySelector('.sidebar');
     let main = document.querySelector('.main');
 
@@ -196,7 +179,7 @@ function showRequestsData($conn) {
         this.classList.add('active');
     }
     Menulist.forEach((item) => item.addEventListener('click', activeLink));
-	
+	//----accounnt---//
 	function showAccounts() {
     document.getElementById('account-content').style.display = 'block';
     document.getElementById('create-content').style.display = 'none';
@@ -248,78 +231,27 @@ function submitForm() {
     xhr.send(formData);
 }
 
+ function showUserIdInput() {
+        var userLevel = document.getElementById("user_level").value;
 
-function fillFormBasedOnControlNo() {
-    let controlNo = document.getElementById('control_no').value;
+        // Hide all input boxes initially
+        document.getElementById("employee_id_input").style.display = "none";
+        document.getElementById("hr_id_input").style.display = "none";
+        document.getElementById("admin_id_input").style.display = "none";
 
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            let data = JSON.parse(xhr.responseText);
-            console.log('Received data:', data);
-
-            document.getElementById('first_name').value = data.first_name;
-            document.getElementById('middle_name').value = data.middle_name;
-            document.getElementById('last_name').value = data.last_name;
-            document.getElementById('position_acquired').value = data.position_acquired;
+        // Show the relevant input box based on the selected user level
+        if (userLevel === "employee") {
+            document.getElementById("employee_id_input").style.display = "block";
+        } else if (userLevel === "hr") {
+            document.getElementById("hr_id_input").style.display = "block";
+        } else if (userLevel === "admin") {
+            document.getElementById("admin_id_input").style.display = "block";
         }
-    };
+    }
 
-    xhr.open('GET', '../backend/get-data-by-control-no.php?controlNo=' + controlNo, true);
-    xhr.send();
-}
-
-
-// Attach the fillFormBasedOnControlNo function to the control number input's change event
-document.getElementById('control_no').addEventListener('change', fillFormBasedOnControlNo);
 //---create----//
 
-//------showRequests--------//
-function approveRequest(requestId) {
-    sendRequest(requestId, 'approve');
-}
 
-function rejectRequest(requestId) {
-    sendRequest(requestId, 'reject');
-}
-
-function sendRequest(requestId, action) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Assuming you have a div with id 'request-result' to display the result
-            document.getElementById('request-result').innerHTML = xhr.responseText;
-            // Refresh the requests data after approval or rejection
-            showRequests();
-        }
-    };
-
-    // Assuming you have a separate PHP file to handle the request processing
-    xhr.open('POST', '../backend/process_request.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    var data = 'action=' + action + '&requestId=' + requestId;
-    xhr.send(data);
-}
-
-function showRequests() {
-    document.getElementById('request-content').style.display = 'block';
-    document.getElementById('create-content').style.display = 'none';
-    document.getElementById('account-content').style.display = 'none';
-    document.getElementById('welcome-content').style.display = 'none';
-
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Assuming you have a div with id 'request-data' to display the data
-            document.getElementById('request-data').innerHTML = xhr.responseText;
-        }
-    };
-
-    // Assuming you have a separate PHP file to handle the database query
-    xhr.open('GET', '../backend/process-request.php', true);
-    xhr.send();
-}
-//------showRequests--------//
 
 
 </script>
